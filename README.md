@@ -19,14 +19,15 @@ Before you begin, ensure you have the following:
     ```bash
     git clone https://github.com/JPEldest/Farmapremium.git
     ```
+2. Copy the env. example to an env file
 
-2. Start the Docker containers:
+3. Start the Docker containers:
 
     ```bash
     docker-compose up --build
     ```
 
-3. Run migrations to get the databases [DO NOT DO IT MYSQL IS NOT WORKING]:
+4. Run migrations to get the databases [DO NOT DO IT MYSQL IS NOT WORKING]:
 
     ```bash
     docker-compose exec app php artisan migrate
