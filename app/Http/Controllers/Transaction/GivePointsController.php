@@ -23,6 +23,6 @@ class GivePointsController extends Controller
 
         $this->bus->dispatch($command);
 
-        return response()->json([], 200);
+        return response()->json([], 201);
     }
 }

@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: Farmapremium Restful API
+  description: >
+    This API is responsible of managing the points gathered and redeem by a Farmapremium user
+  contact:
+    name: Joan Palleja
+    email: joan.pallejale@gmail.com
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000'
+    description: Local
+
+paths:
+  #USERS
+  /users/{userId}/balance:
+    get:
+      operationId: GerUserBalance
+      summary: Gets the balance available for a user
+      description: User balance
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/UserBalance'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  #TRANSACTIONS
+  /transactions/pharmacy/{pharmacyId}/{startDay}/{endDay}:
+    get:
+      operationId: GetPharmacyActivePoints
+      summary: Get points not redeemed of a pharmacy
+      description: Get points not redeemed in a period of time
+      tags:
+        - Transactions
+      parameters:
+        - in: path
+          name: pharmacyId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: startDay
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: endDay
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/PharmacyActivePoints'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /transactions/pharmacy/{pharmacyId}/user/{userId}:
+    get:
+      operationId: GetPharmacyPointsToUser
+      summary: return the points given to user
+      description: Get permissions given in total to user
+      tags:
+        - Transactions
+      parameters:
+        - in: path
+          name: pharmacyId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/PharmacyPointsToUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /api/v1/orders:
+    post:
+      operationId: CreateTransaction
+      summary: Create Transaction
+      description: Create a transaction.
+      tags:
+        - Transactions
+      responses:
+        '201':
+          description: Accepted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+components:
+  schemas:
+    Error:
+      type: object
+      description: Standard error response
+      properties:
+        title:
+          description: Error description summary
+          type: string
+          example: Invalid request
+        status:
+          description: Http Error code
+          type: integer
+          example: 400
+    PharmacyActivePoints:
+      type: object
+      description: Pharmacy Active Points
+      additionalProperties: false
+      properties:
+        response:
+          type: integer
+          example: 50
+    UserBalance:
+      type: object
+      additionalProperties: false
+      description: List of academic years
+      properties:
+        response:
+          type: integer
+          example: 20
+    PharmacyPointsToUser:
+      type: object
+      description: Pharmacy Points Given To User
+      additionalProperties: false
+      properties:
+        response:
+          type: integer
+          example: 50
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PharmacyActivePoints:
+      description: Get organization view info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PharmacyActivePoints'
+    UserBalance:
+      description: User Balance
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserBalance'
+    PharmacyPointsToUser:
+      description: Pharmacy Points to User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PharmacyPointsToUser'
