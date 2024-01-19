@@ -68,11 +68,17 @@ This project is not over yet. There is always room for improvement.
 The first thing would be fixing the mysql container in docker. 
 It is not allowing me to connect to the DB, 
 for that reason I could not test the application outside the tests or run the migrations.
-I would have also loved to install a makefile or something similar, but I decided not to use time on that for such a small project
+
+I would have also loved to install a makefile or something similar, but I decided not to use time on that for such a small project.
+
 I also did not have time to use proper TimeDate objects in the actions that require checking the creation time.
+
 Next steps for this project would be the integration tests and the acceptance tests, that I had not time to do, what leaves me only with the Unit tests.
+
 Also a proper error management system is missing, with try and catches to provide better answers with more information about the errors to the user.
+
 And fixing the routes, for some reason I had problems with laravel routing, for this reason I left all the parameters in the path, but that does not make sense to the calls.
+
 
 Thank you very much, I would like to receive feedback from you about this if you have the time to spare.
 
