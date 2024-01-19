@@ -20,18 +20,15 @@ private array $transactions = [];
 
     public function redeemPoints(Points $points, UserId $userId): void
     {
-//        $list = array_filter($this->transactions, function (Transaction $transaction) use ($userId) {
-//            return $transaction->userId() === $userId->asString() && $transaction->pointsLeft() > 0;
-//        });
-        $list = [];
-        /** @var Transaction $transaction */
-        foreach ($this->transactions as $transaction){
-            if ($transaction->userId() === $userId && $transaction->transactionType() === TransactionType::GIVE) {
-                $list[] = $transaction;
+        $list = array_filter(
+            $this->transactions,
+            function (Transaction $transaction) use ($userId) {
+                return $transaction->userId() ->asString() === $userId->asString() && $transaction->pointsLeft()->asInt() >0;
             }
-        }
+        );
 
-        while ($points->asInt() > 0) {
+        $list = array_values($list);
+        while ($points->asInt() > 0 && !empty($list)) {
             $transactionPoints = $list[0]->pointsLeft();
             if ($points->isBiggerThan($transactionPoints))
             {
@@ -52,35 +49,12 @@ private array $transactions = [];
 
             $this->save($updateTransaction);
 
-            unset($list[0]);
+            array_shift($list);
         }
     }
 
     public function save(Transaction $transaction): void
     {
         $this->transactions[$transaction->id()->asString()] = $transaction;
-    }
-
-    public function ofId(TransactionId $transactionId): Transaction
-    {
-        return $this->transactions[$transactionId->asString()];
-    }
-
-    public function checking(Points $points, UserId $userId): array
-    {
-//        $list = array_filter($this->transactions, function (Transaction $transaction) use ($userId) {
-//            return $transaction->userId() === $userId->asString() && $transaction->pointsLeft() > 0;
-//        });
-        $list = [];
-        /** @var Transaction $transaction */
-        foreach ($this->transactions as $transaction){
-            if ($transaction->userId() === $userId && $transaction->transactionType() === TransactionType::GIVE) {
-                $list[] = $transaction;
-            }
-        }
-
-        $list = array_values($list);
-
-        return $list;
     }
 }

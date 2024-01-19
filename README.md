@@ -50,6 +50,7 @@ Before you begin, ensure you have the following:
 ### Development services
 
 You can find the documentation of this api in the apidoc.yml file
+And you can file the src files in the app folder
 
 ## Testing
 
@@ -60,8 +61,6 @@ php artisan test
 ```
 ### Comments and further development
 First of all thanks for the opportunity to take part of this process.
-
-I tried to finish the full project within the 7 days period. I had a tough time setting docker and the framework in my computer. Unfortunately I didn't manage to set the mysql correctly, so in order to try the api you can only relate to the tests.
 
 Next steps for this project would be the integration tests and the acceptance tests.
 

@@ -24,58 +24,16 @@ class CreateTransactionCommandTest extends TestCase
         parent::setUp();
     }
 
-//    /**
-//     * @test
-//     */
-//    public function should_create_redeem_transaction()
-//    {
-//        $startingBalance = Balance::fromInt(100);
-//        $user = StubUserBuilder::create()->withBalance($startingBalance)->build();
-//        $this->usersRepository->save($user);
-//        $giveOne = StubTransactionBuilder::create()
-//            ->withTransactionType(TransactionType::GIVE)
-//            ->withId(TransactionId::fromString('HOLA'))
-//            ->withUserId($user->id())
-//            ->withPoints(Points::fromInt(20))
-//            ->build();
-//        $this->transactionsRepository->save($giveOne);
-//        $giveTwo = StubTransactionBuilder::create()
-//            ->withTransactionType(TransactionType::GIVE)
-//            ->withUserId($user->id())
-//            ->withPoints(Points::fromInt(30))
-//            ->build();
-//        $this->transactionsRepository->save($giveTwo);
-//
-//        $redeem = StubTransactionBuilder::create()
-//            ->withTransactionType(TransactionType::REDEEM)
-//            ->withUserId($user->id())
-//            ->withPoints(Points::fromInt(40))
-//            ->build();
-//
-//        $command = CreateTransactionCommand::create(
-//            $redeem->id()->asString(),
-//            $redeem->pharmacyId()->asString(),
-//            $redeem->userId()->asString(),
-//            $redeem->points()->asInt(),
-//            $redeem->transactionType()->value,
-//            $redeem->pointsLeft()->asInt()
-//        );
-//
-//        $this->createTransactionCommandHandler->handle($command);
-//        $afterUser = $this->usersRepository->ofId($user->id());
-//        $afterGiveOne = $this->transactionsRepository->ofId($giveOne->id());
-//        self::assertEquals($startingBalance->asInt(), $redeem->points()->asInt()+$afterUser->balance()->asInt());
-//        self::assertEquals(0, $afterGiveOne->pointsLeft()->asInt());
-//    }
-
-    public function ssss()
+    /**
+     * @test
+     */
+    public function should_create_redeem_transaction()
     {
         $startingBalance = Balance::fromInt(100);
         $user = StubUserBuilder::create()->withBalance($startingBalance)->build();
         $this->usersRepository->save($user);
         $giveOne = StubTransactionBuilder::create()
             ->withTransactionType(TransactionType::GIVE)
-            ->withId(TransactionId::fromString('HOLA'))
             ->withUserId($user->id())
             ->withPoints(Points::fromInt(20))
             ->build();
@@ -87,8 +45,28 @@ class CreateTransactionCommandTest extends TestCase
             ->build();
         $this->transactionsRepository->save($giveTwo);
 
-        $array = [$giveOne, $giveTwo];
+        $redeem = StubTransactionBuilder::create()
+            ->withTransactionType(TransactionType::REDEEM)
+            ->withUserId($user->id())
+            ->withPoints(Points::fromInt(40))
+            ->build();
 
-        self::assertEquals($array, $this->transactionsRepository->checking(Points::fromInt(40), $user->id()));
+        $command = CreateTransactionCommand::create(
+            $redeem->id()->asString(),
+            $redeem->pharmacyId()->asString(),
+            $redeem->userId()->asString(),
+            $redeem->points()->asInt(),
+            $redeem->transactionType()->value,
+            $redeem->pointsLeft()->asInt()
+        );
+
+        $this->createTransactionCommandHandler->handle($command);
+        $afterUser = $this->usersRepository->ofId($user->id());
+
+        $remainingPoints = $giveTwo->points()->asInt() -($redeem->points()->asInt() - $giveOne->points()->asInt());
+
+        self::assertEquals($startingBalance->asInt(), $redeem->points()->asInt()+$afterUser->balance()->asInt());
+        self::assertEquals(0, $giveOne->pointsLeft()->asInt());
+        self::assertEquals($remainingPoints, $giveTwo->pointsLeft()->asInt());
     }
 }

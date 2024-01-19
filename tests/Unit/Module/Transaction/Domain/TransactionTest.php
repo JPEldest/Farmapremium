@@ -66,6 +66,19 @@ class TransactionTest extends TestCase
     /**
      * @test
      */
+    public function should_redeem_points_to_zero()
+    {
+        $startingPoints = StubPoints::withPoints(50);
+        $transaction = StubTransactionBuilder::create()->withPoints($startingPoints)->build();
+        $pointsToRedeem = $startingPoints;
+        $transaction->redeemPoints($pointsToRedeem);
+
+        self::assertEquals(0, $transaction->pointsLeft()->asInt());
+    }
+
+    /**
+     * @test
+     */
     public function should_not_redeem_points()
     {
         self::expectException(NotEnoughBalanceException::class);

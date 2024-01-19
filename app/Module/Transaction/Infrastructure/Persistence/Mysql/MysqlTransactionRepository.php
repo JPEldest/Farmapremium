@@ -44,7 +44,8 @@ class MysqlTransactionRepository implements TransactionRepository
             );
         }
 
-        while ($points->asInt() > 0) {
+        $transactions = array_values($transactions);
+        while ($points->asInt() > 0 && !empty($transactions)) {
             $transactionPoints = $transactions[0]->pointsLeft();
             if ($points->isBiggerThan($transactionPoints))
             {
@@ -64,7 +65,8 @@ class MysqlTransactionRepository implements TransactionRepository
             );
 
             $this->save($updateTransaction);
-            unset($transactions[0]);
+
+            array_shift($transactions);
         }
     }
 
