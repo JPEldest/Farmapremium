@@ -4,7 +4,14 @@ namespace App\Providers;
 
 use App\Module\Transaction\Application\CreateTransaction\CreateTransactionCommand;
 use App\Module\Transaction\Application\CreateTransaction\CreateTransactionCommandHandler;
+use App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod\GetActiveTransactionsByPharmacyAndTimePeriodQuery;
+use App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod\GetActiveTransactionsByPharmacyAndTimePeriodQueryHandler;
+use App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod\GetAllTransactionsByPharmacyAndTimePeriodQuery;
+use App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod\GetAllTransactionsByPharmacyAndTimePeriodQueryHandler;
+use App\Module\Transaction\Application\GetPointsGivenToUser\GetPointsGivenToUserQuery;
+use App\Module\Transaction\Application\GetPointsGivenToUser\GetPointsGivenToUserQueryHandler;
 use App\Module\Transaction\Domain\TransactionRepository;
+use App\Module\Transaction\Infrastructure\Persistence\Mysql\MysqlReadTransactionRepository;
 use App\Module\Transaction\Infrastructure\Persistence\Mysql\MysqlTransactionRepository;
 use App\Module\User\Application\GetUserBalance\GetUserBalanceQuery;
 use App\Module\User\Application\GetUserBalance\GetUserBalanceQueryHandler;
@@ -44,6 +51,11 @@ class AppServiceProvider extends ServiceProvider
             TransactionRepository::class,
             MysqlTransactionRepository::class
         );
+
+        $this->app->singleton(
+            \App\Module\Transaction\Domain\Read\TransactionRepository::class,
+            MysqlReadTransactionRepository::class
+        );
     }
 
     /**
@@ -56,5 +68,8 @@ class AppServiceProvider extends ServiceProvider
 
         $queryBus = app(QueryBusInterface::class);
         $queryBus->register([GetUserBalanceQuery::class => GetUserBalanceQueryHandler::class]);
+        $queryBus->register([GetPointsGivenToUserQuery::class => GetPointsGivenToUserQueryHandler::class]);
+        $queryBus->register([GetAllTransactionsByPharmacyAndTimePeriodQuery::class => GetAllTransactionsByPharmacyAndTimePeriodQueryHandler::class]);
+        $queryBus->register([GetActiveTransactionsByPharmacyAndTimePeriodQuery::class => GetActiveTransactionsByPharmacyAndTimePeriodQueryHandler::class]);
     }
 }

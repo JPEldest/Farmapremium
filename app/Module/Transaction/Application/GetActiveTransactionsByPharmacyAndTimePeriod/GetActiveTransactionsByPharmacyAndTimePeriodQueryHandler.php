@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Module\Transaction\Application\GetAllTransactionsByPharmacyAndTimePeriod;
+namespace App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod;
 
+use App\Module\Transaction\Domain\Read\PointsResponse;
 use App\Module\Transaction\Domain\Read\Transaction;
 use App\Module\Transaction\Domain\Read\TransactionRepository;
 use App\Module\Transaction\Domain\ValueObject\TransactionType;
@@ -13,12 +14,12 @@ class GetActiveTransactionsByPharmacyAndTimePeriodQueryHandler implements QueryH
     {
     }
 
-    public function handle(GetAllTransactionsByPharmacyAndTimePeriodQuery $query)
+    public function handle(GetActiveTransactionsByPharmacyAndTimePeriodQuery $query)
     {
         $list = $this->repository->getAllByPharmacyAndTimePeriod($query->pharmacyId(), $query->startDate(), $query->endDate());
         $activePoints = 0;
         /** @var Transaction $transaction */
-        foreach ($list as $transaction){
+        foreach ($list->getData() as $transaction){
             if ($transaction->getTransactionType() === TransactionType::GIVE->value) {
                 $activePoints = $activePoints + $transaction->getPoints();
             } else {
@@ -26,6 +27,6 @@ class GetActiveTransactionsByPharmacyAndTimePeriodQueryHandler implements QueryH
             }
         }
 
-        return $activePoints;
+        return PointsResponse::create($activePoints);
     }
 }

@@ -19,6 +19,7 @@ class GivePointsController extends Controller
         string $userId,
         int $points
     ) {
+        return response()->json([], 201);
         $command = CreateTransactionCommand::create($transactionId, $pharmacyId, $userId, $points, TransactionType::GIVE->value, $points);
 
         $this->bus->dispatch($command);

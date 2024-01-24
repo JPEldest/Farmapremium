@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Module\Transaction\Application\GetAllTransactionsByPharmacyAndTimePeriod;
+namespace App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod;
 
+use App\Module\Pharmacy\Domain\ValueObject\PharmacyId;
 use App\Shared\Application\Query\Query;
 
 class GetActiveTransactionsByPharmacyAndTimePeriodQuery implements Query
@@ -15,9 +16,9 @@ class GetActiveTransactionsByPharmacyAndTimePeriodQuery implements Query
         return new self($pharmacyId, $startDate, $endDate);
     }
 
-    public function pharmacyId(): string
+    public function pharmacyId(): PharmacyId
     {
-        return $this->pharmacyId;
+        return PharmacyId::fromString($this->pharmacyId);
     }
 
     public function startDate(): string

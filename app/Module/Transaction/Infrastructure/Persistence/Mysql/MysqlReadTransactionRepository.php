@@ -5,6 +5,7 @@ namespace App\Module\Transaction\Infrastructure\Persistence\Mysql;
 use App\Module\Pharmacy\Domain\ValueObject\PharmacyId;
 use App\Module\Transaction\Domain\Read\Transaction;
 use App\Module\Transaction\Domain\Read\TransactionRepository;
+use App\Module\Transaction\Domain\Read\TransactionsArray;
 use App\Module\Transaction\Domain\ValueObject\TransactionType;
 use App\Module\User\Domain\ValueObject\UserId;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class MysqlReadTransactionRepository implements TransactionRepository
 {
 
-    public function getAllByPharmacyAndTimePeriod(PharmacyId $pharmacyId, string $startDate, string $endDate): array
+    public function getAllByPharmacyAndTimePeriod(PharmacyId $pharmacyId, string $startDate, string $endDate): TransactionsArray
     {
         $transactions = DB::select("
             SELECT *
@@ -20,9 +21,9 @@ class MysqlReadTransactionRepository implements TransactionRepository
             WHERE pharmacy_id = ?
             AND created_at BETWEEN ? AND ?
         ", [$pharmacyId->asString(), $startDate, $endDate]);
-
+        $response = [];
         foreach ($transactions as $transaction) {
-            $transactions[] = Transaction::create(
+            $response[] = Transaction::create(
                 $transaction->id,
                 $transaction->user_id,
                 $transaction->pharmacy_id,
@@ -30,10 +31,10 @@ class MysqlReadTransactionRepository implements TransactionRepository
                 $transaction->transaction_type
             );
         }
-        return $transactions;
+        return TransactionsArray::create($response);
     }
 
-    public function getTransactionsByPharmacyUserAndType(PharmacyId $pharmacyId, UserId $userId,TransactionType $transactionType):array
+    public function getTransactionsByPharmacyUserAndType(PharmacyId $pharmacyId, UserId $userId, TransactionType $transactionType): TransactionsArray
     {
         $transactions = DB::select("
             SELECT *
@@ -43,8 +44,9 @@ class MysqlReadTransactionRepository implements TransactionRepository
             AND transaction_type = ?
         ", [$pharmacyId->asString(), $userId->asString(), $transactionType->value]);
 
+        $response = [];
         foreach ($transactions as $transaction) {
-            $transactions[] = Transaction::create(
+            $response[] = Transaction::create(
                 $transaction->id,
                 $transaction->user_id,
                 $transaction->pharmacy_id,
@@ -52,6 +54,6 @@ class MysqlReadTransactionRepository implements TransactionRepository
                 $transaction->transaction_type
             );
         }
-        return $transactions;
+        return TransactionsArray::create($response);
     }
 }

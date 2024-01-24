@@ -16,6 +16,6 @@ class GetPharmacyPointsToUserController extends Controller
     {
         $query = GetPointsGivenToUserQuery::create($pharmacyId, $userId);
 
-        return response()->json(['response' => $this->bus->query($query)], 200);
+        return response()->json(['response' => $this->bus->query($query)->getData()], 200);
     }
 }

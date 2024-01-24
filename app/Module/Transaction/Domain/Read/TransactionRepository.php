@@ -8,6 +8,6 @@ use App\Module\User\Domain\ValueObject\UserId;
 
 interface TransactionRepository
 {
-    public function getAllByPharmacyAndTimePeriod(PharmacyId $pharmacyId, string $startDate, string $endDate):array;//TODO change for Collection
-    public function getTransactionsByPharmacyUserAndType(PharmacyId $pharmacyId, UserId $userId,TransactionType $transactionType):array;
+    public function getAllByPharmacyAndTimePeriod(PharmacyId $pharmacyId, string $startDate, string $endDate):TransactionsArray;
+    public function getTransactionsByPharmacyUserAndType(PharmacyId $pharmacyId, UserId $userId,TransactionType $transactionType):TransactionsArray;
 }

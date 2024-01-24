@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\Http\Controllers\Controller;
-use App\Module\Transaction\Application\GetAllTransactionsByPharmacyAndTimePeriod\GetActiveTransactionsByPharmacyAndTimePeriodQuery;
+use App\Module\Transaction\Application\GetActiveTransactionsByPharmacyAndTimePeriod\GetActiveTransactionsByPharmacyAndTimePeriodQuery;
 use App\Shared\Infrastructure\Bus\QueryBus;
 use Illuminate\Support\Facades\Date;
 
 class GetPharmacyActivePointsController extends Controller
 {
-    public const FORMAT = 'dd-mm-yy';
+    public const FORMAT = 'd-m-y';
     public function __construct(protected QueryBus $bus)
     {}
 
@@ -20,7 +20,7 @@ class GetPharmacyActivePointsController extends Controller
 
         $query = GetActiveTransactionsByPharmacyAndTimePeriodQuery::create($pharmacyId, $startDate, $endDate);
 
-        return response()->json(['response' => $this->bus->query($query)], 200);
+        return response()->json(['response' => $this->bus->query($query)->getPoints()], 200);
     }
 
 }
