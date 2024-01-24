@@ -83,13 +83,15 @@ paths:
           $ref: '#/components/responses/PharmacyPointsToUser'
         '400':
           $ref: '#/components/responses/BadRequest'
-  /api/v1/orders:
+  /api/transactions/create:
     post:
       operationId: CreateTransaction
       summary: Create Transaction
       description: Create a transaction.
       tags:
         - Transactions
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTransaction'
       responses:
         '201':
           description: Accepted
@@ -133,6 +135,39 @@ components:
         response:
           type: integer
           example: 50
+    CreateTransaction:
+      type: object
+      description: Data to create a transaction
+      additionalProperties: false
+      properties:
+        transactionId:
+          description: Transaction Id
+          type: string
+          example: "d98825da-cd38-4bb0-a898-a1f7e4d37a0a"
+        pharmacyId:
+          description: Pharmacy Id
+          type: string
+          example: "d98825da-cd38-4bb0-a898-a1f7e4d37a0a"
+        userId:
+          description: User Id
+          type: string
+          example: "d98825da-cd38-4bb0-a898-a1f7e4d37a0a"
+        points:
+          description: Points transacted
+          type: integer
+          example: 50
+        transactionType:
+          description: type of transaction
+          enum:
+            - give
+            - redeem
+          example: "give"
+  requestBodies:
+    CreateTransaction:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTransaction'
   responses:
     BadRequest:
       description: Bad request

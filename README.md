@@ -27,7 +27,7 @@ Before you begin, ensure you have the following:
     docker-compose up --build
     ```
 
-4. Run migrations to get the databases [DO NOT DO IT MYSQL IS NOT WORKING]:
+4. Run migrations to get the databases:
 
     ```bash
     docker-compose exec app php artisan migrate
@@ -62,12 +62,10 @@ php artisan test
 ### Comments and further development
 First of all thanks for the opportunity to take part of this process. I enjoyed a lot to code as I used to.
 
-Next would be that the dockerization has been not as good as I wanted to be. My personal laptop was not ready for the task, so in installing and getting it ready I lost a fair amount of time that could have gone to the code. That is the reason the mysql implementation is not working properly, since I could not manage to connected it as I should, or I would have been able but it would have left so little time to the coding itself.
+Next would be that the dockerization has been not as good as I wanted to be. My personal laptop was not ready for the task, so in installing and getting it ready I lost a fair amount of time that could have gone to the code. That means that some parts of the development have been rushed and also makes that test has such a low coverage
 
 This project is not over yet. There is always room for improvement. 
-The first thing would be fixing the mysql container in docker. 
-It is not allowing me to connect to the DB, 
-for that reason I could not test the application outside the tests or run the migrations.
+The first thing would be making more unit tests, some requests have not been tested with tests, although I tested them all with POSTMAN
 
 I would have also loved to install a makefile or something similar, but I decided not to use time on that for such a small project.
 
