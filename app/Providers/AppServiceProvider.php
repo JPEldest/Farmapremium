@@ -17,6 +17,7 @@ use App\Module\User\Application\GetUserBalance\GetUserBalanceQuery;
 use App\Module\User\Application\GetUserBalance\GetUserBalanceQueryHandler;
 use App\Module\User\Domain\Read\UserRepository;
 use App\Module\User\Infrastructure\Persistence\Mysql\MysqlUserReadRepository;
+use App\Module\User\Infrastructure\Persistence\Mysql\MysqlUserWriteRepository;
 use App\Shared\Application\Command\CommandBusInterface;
 use App\Shared\Application\Query\QueryBusInterface;
 use App\Shared\Infrastructure\Bus\CommandBus;
@@ -45,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             UserRepository::class,
             MysqlUserReadRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Module\User\Domain\UserRepository::class,
+            MysqlUserWriteRepository::class
         );
 
         $this->app->singleton(

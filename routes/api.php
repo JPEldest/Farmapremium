@@ -26,4 +26,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/users/{userId}/balance', [GetUserBalanceController::class, 'getBalance']);
 Route::get('/transactions/pharmacy/{pharmacyId}/{startDay}/{endDay}', [GetPharmacyActivePointsController::class, 'getActivePoints']);
 Route::get('/transactions/actions/pharmacy/{pharmacyId}/user/{userId}', [GetPharmacyPointsToUserController::class, 'getPointsGivenToUser']);
-Route::post('/transactions/{transactionId}/pharmacy/{pharmacyId}/user/{$userId}/give/{points}', [GivePointsController::class, 'givePointsTransaction']);
+
+Route::post('/transactions/create', [GivePointsController::class, 'givePointsTransaction']);

@@ -16,7 +16,7 @@ class MysqlTransactionRepository implements TransactionRepository
 
     public function create(Transaction $transaction): void
     {
-        $create = DB::insert('INSERT INTO transactions (id, user_id, pharmacy_id, points, transaction_type, points_left,created_at, updated_at) VALUES (?, NOW(), NOW())', [$transaction->id()->asString(), $transaction->userId()->asString(), $transaction->pharmacyId()->asString(), $transaction->points()->asInt(), $transaction->transactionType()->value]);
+        $create = DB::insert('INSERT INTO transactions (id, user_id, pharmacy_id, points, transaction_type, points_left,created_at, updated_at) VALUES (?,?,?,?,?,?, NOW(), NOW())', [$transaction->id()->asString(), $transaction->userId()->asString(), $transaction->pharmacyId()->asString(), $transaction->points()->asInt(), $transaction->transactionType()->value, $transaction->pointsLeft()->asInt()]);
 
         if (!$create) {
             throw new InvalidArgumentException();
@@ -28,13 +28,16 @@ class MysqlTransactionRepository implements TransactionRepository
         $transactions = DB::select('
             SELECT *
             FROM transactions
-            WHERE user_id = ?
-            AND transaction_type = '.TransactionType::GIVE->value.'
+            WHERE user_id = :user_id
+            AND transaction_type = :transaction_type
             AND points_left > 0
-            ORDER BY created_at ASC');
-
+            ORDER BY created_at ASC', [
+            'user_id' => $userId->asString(),
+            'transaction_type' => TransactionType::GIVE->value,
+        ]);
+        $response = [];
         foreach ($transactions as $transaction) {
-            $transactions[] = Transaction::create(
+            $response[] = Transaction::create(
                 TransactionId::fromString($transaction->id),
                 UserId::fromString($transaction->user_id),
                 PharmacyId::fromString($transaction->pharmacy_id),
@@ -44,29 +47,33 @@ class MysqlTransactionRepository implements TransactionRepository
             );
         }
 
-        $transactions = array_values($transactions);
-        while ($points->asInt() > 0 && !empty($transactions)) {
-            $transactionPoints = $transactions[0]->pointsLeft();
+        $response = array_values($response);
+        while ($points->asInt() > 0 && !empty($response)) {
+            $transactionPoints = $response[0]->pointsLeft();
+
             if ($points->isBiggerThan($transactionPoints))
             {
                 $points = Points::fromInt($points->asInt() - $transactionPoints->asInt());
-                $transactions[0]->redeemPoints($transactionPoints);
+                $pointsLeft = Points::fromInt(0);
+                $response[0]->redeemPoints($transactionPoints);
             } else {
-                $transactions[0]->redeemPoints($points);
+                $response[0]->redeemPoints($points);
+                $pointsLeft = Points::fromInt($transactionPoints->asInt() - $points->asInt());
+                $points = Points::fromInt(0);
             }
 
             $updateTransaction = Transaction::create(
-                $transactions[0]->id(),
-                $transactions[0]->userId(),
-                $transactions[0]->pharmacyId(),
-                $transactions[0]->points(),
-                $transactions[0]->transactionType(),
-                $points
+                $response[0]->id(),
+                $response[0]->userId(),
+                $response[0]->pharmacyId(),
+                $response[0]->points(),
+                $response[0]->transactionType(),
+                $pointsLeft
             );
 
             $this->save($updateTransaction);
 
-            array_shift($transactions);
+            array_shift($response);
         }
     }
 

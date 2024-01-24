@@ -4,10 +4,12 @@ namespace App\Module\Transaction\Application\CreateTransaction;
 
 use App\Module\Transaction\Domain\Transaction;
 use App\Module\Transaction\Domain\TransactionRepository;
+use App\Module\Transaction\Domain\TransactionResult;
 use App\Module\Transaction\Domain\ValueObject\TransactionType;
 use App\Module\User\Domain\UserRepository;
 use App\Module\User\Domain\ValueObject\Balance;
 use App\Shared\Application\Command\CommandHandlerInterface;
+use App\Shared\Application\Command\Result;
 
 class CreateTransactionCommandHandler implements CommandHandlerInterface
 {
@@ -40,5 +42,7 @@ class CreateTransactionCommandHandler implements CommandHandlerInterface
         }
 
         $this->userRepository->save($user);
+
+        return TransactionResult::success();
     }
 }
